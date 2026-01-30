@@ -1,12 +1,12 @@
 package org.juanlopezaranzazu.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.juanlopezaranzazu.dto.CreateUserDTO;
 import org.juanlopezaranzazu.dto.UpdateUserDTO;
 import org.juanlopezaranzazu.dto.UserDTO;
 import org.juanlopezaranzazu.service.UserService;
@@ -16,6 +16,7 @@ import java.util.List;
 @Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@RolesAllowed({"ADMIN"})
 public class UserController {
 
     @Inject
@@ -39,12 +40,6 @@ public class UserController {
     public Response getUserByUsername(@PathParam("username") String username) {
         UserDTO user = userService.getUserByUsername(username);
         return Response.ok(user).build();
-    }
-
-    @POST
-    public Response createUser(@Valid CreateUserDTO createUserDTO) {
-        UserDTO newUser = userService.createUser(createUserDTO);
-        return Response.status(Response.Status.CREATED).entity(newUser).build();
     }
 
     @PUT

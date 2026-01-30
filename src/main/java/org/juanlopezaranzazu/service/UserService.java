@@ -3,7 +3,6 @@ package org.juanlopezaranzazu.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
-import org.juanlopezaranzazu.dto.CreateUserDTO;
 import org.juanlopezaranzazu.dto.UpdateUserDTO;
 import org.juanlopezaranzazu.dto.UserDTO;
 import org.juanlopezaranzazu.entity.User;
@@ -13,7 +12,6 @@ import org.juanlopezaranzazu.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,28 +36,6 @@ public class UserService {
     public UserDTO getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        return mapToDTO(user);
-    }
-
-    public UserDTO createUser(CreateUserDTO createUserDTO) {
-        if (userRepository.existsByUsername(createUserDTO.getUsername())) {
-            throw new BadRequestException("Username is already taken");
-        }
-        if (userRepository.existsByEmail(createUserDTO.getEmail())) {
-            throw new BadRequestException("Email is already in use");
-        }
-
-        User user = new User();
-        user.username = createUserDTO.getUsername();
-        user.email = createUserDTO.getEmail();
-        user.password = BCrypt.hashpw(createUserDTO.getPassword(), BCrypt.gensalt());
-        user.firstName = createUserDTO.getFirstName();
-        user.lastName = createUserDTO.getLastName();
-        user.roles = Arrays.asList("USER");
-        user.createdAt = LocalDateTime.now();
-        user.updatedAt = LocalDateTime.now();
-
-        userRepository.persist(user);
         return mapToDTO(user);
     }
 
